@@ -13,14 +13,15 @@ export class CreateUserService {
     // pour pouvoir ensuite utiliser les méthodes du repository
     // dans les méthodes de notre service
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly passwordService: PasswordService,
+    // private readonly userRepository: Repository<User>,
+    private readonly passwordHasherServiceInterface: PasswordHasherServiceInterface,
   ) { }
 
 
   async createUser(data: UserCreateDto) {
     try {
-      return this.userRepository.save({ ...data, password: await this.passwordService.hashPassword(data.password) });
+      const passwordHashed = await this.passwordHasherServiceInterface.hashPassword(data.password);
+      // return this.userRepository.save({ ...data, password: passwordHashed });
     } catch (error) {
       console.log(error);
       throw new Error('Error while creating article');

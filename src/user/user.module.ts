@@ -8,6 +8,13 @@ import { PasswordService } from './utils/password.service';
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
-  providers: [CreateUserService, PasswordService],
+  providers: [{
+    provide: CreateUserService,
+    useFactory: (passwordHasherService: PasswordHasherServiceInterface) => {
+      return new CreateUserService(passwordHasherService);
+    },
+    inject: [PasswordService],
+  }, PasswordService],
+
 })
 export class UserModule { }

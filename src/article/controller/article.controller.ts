@@ -8,9 +8,14 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ArticleService } from '../use-case/getArticlesByAuthor';
 import { ArticleCreateDto } from '../dto/article-create.dto';
 import { ArticleUpdateDto } from '../dto/article-update.dto';
+import { GetAllArticles } from '../use-case/getAllArticles';
+import { GetOneArticleById } from '../use-case/getOneArticleById';
+import { CreateArticle } from '../use-case/createArticle';
+import { UpdateArticle } from '../use-case/updateArticle';
+import { DeleteArticle } from '../use-case/deleteArticle';
+import { GetArticlesByAuthor } from '../use-case/getArticlesByAuthor';
 
 // @Controller('articles')
 // est un décorateur qui permet de déclarer un controller
@@ -20,13 +25,22 @@ export class ArticleController {
   // injection de dépendance
   // permet d'instancier la classe ArticleService
   // dans la propriété articleService
-  constructor(private readonly articleService: ArticleService) { }
+  constructor(private readonly getAllArticlesService: GetAllArticles,
+    private readonly getOneArticleByIdService: GetOneArticleById,
+    private readonly createArticleService: CreateArticle,
+    private readonly updateArticleService: UpdateArticle,
+    private readonly deleteArticleService: DeleteArticle,
+    private readonly getArticlesByAuthorService: GetArticlesByAuthor,
+
+
+
+  ) { }
 
   // @Get() est un décorateur qui permet de déclarer
   // une route accessible avec la méthode GET
   @Get()
   getAllArticles() {
-    return this.articleService.getAllarticles();
+    return this.getAllArticlesService.getAllarticles();
   }
 
   // on peut passer en parametre du décorateur
@@ -34,7 +48,7 @@ export class ArticleController {
   // on peut ensuite récupérer sa valeur avec le décorateur @Param
   @Get(':id')
   getOneArticleById(@Param('id', ParseIntPipe) id: number) {
-    return this.articleService.getOneArticleById(id);
+    return this.getOneArticleByIdService.getOneArticleById(id);
   }
 
   @Post()
@@ -43,7 +57,7 @@ export class ArticleController {
   // on valide les données du body de la requête
   // avec un DTO (Data Transfer Object)
   createArticle(@Body() data: ArticleCreateDto) {
-    return this.articleService.createArticle(data);
+    return this.createArticleService.createArticle(data);
   }
 
   @Put(':id')
@@ -51,17 +65,17 @@ export class ArticleController {
     @Param('id', ParseIntPipe) id: number,
     @Body() data: ArticleUpdateDto,
   ) {
-    return this.articleService.updateArticle(id, data);
+    return this.updateArticleService.updateArticle(id, data);
   }
 
   @Delete(':id')
   deleteArticle(@Param('id', ParseIntPipe) id: number) {
-    return this.articleService.deleteArticle(id);
+    return this.deleteArticleService.deleteArticle(id);
   }
 
   @Get('search/:author')
   getArticlesByAuthor(@Param('author') author: string) {
-    return this.articleService.getArticlesByAuthor(author);
+    return this.getArticlesByAuthorService.getArticlesByAuthor(author);
   }
 
   // Commentaire : Lors de l'appel de cette route, nestjs va instancier la classe ArticleService, 

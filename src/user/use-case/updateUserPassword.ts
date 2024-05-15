@@ -1,31 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserCreateDto } from '../dto/user-create.dto';
 import { User } from '../entity/user.entity';
 import { PasswordService } from '../utils/password.service';
 
 Injectable();
-export class CreateUserService {
+export class UpdateUserPasswordService {
   constructor(
     // on "injecte" le repository de l'entité Article
     // dans la propriété articleRepository de la classe ArticleService
     // pour pouvoir ensuite utiliser les méthodes du repository
     // dans les méthodes de notre service
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly passwordHasherService: PasswordService,
+    private readonly articleRepository: Repository<User>,
+    private readonly passwordService: PasswordService,
   ) { }
 
 
-  async createUser(data: UserCreateDto) {
-    try {
-      const passwordHashed = await this.passwordHasherService.hashPassword(data.password);
-      return this.userRepository.save({ ...data, password: passwordHashed });
-    } catch (error) {
-      console.log(error);
-      throw new Error('Error while creating article');
-    }
+  async updateUserPassword(id: number, password: string) {
+    // on récupère l'article ciblé
+    const user = await this.articleRepository.findOneBy({ id });
+    // on "merge" les données du body de la requête
+    // avec les données déjà présentes dans l'article
+    user.password = await this.passwordService.hashPassword(password);
+    // on sauvegarde l'article mis à jour
+    await this.articleRepository.save(user);
+
+    return user;
   }
 
   //Commentaire : Après que le service ait été instancié, 

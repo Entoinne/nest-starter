@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserCreateDto } from '../dto/user-create.dto';
 import { User } from '../entity/user.entity';
-import { PasswordService } from '../utils/password.service';
 
 Injectable();
-export class CreateUserService {
+export class GetUsersByBirthCityService {
   constructor(
     // on "injecte" le repository de l'entité Article
     // dans la propriété articleRepository de la classe ArticleService
@@ -14,14 +12,12 @@ export class CreateUserService {
     // dans les méthodes de notre service
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly passwordHasherService: PasswordService,
   ) { }
 
 
-  async createUser(data: UserCreateDto) {
+  async getUsersByBirthCity(birthCity: string) {
     try {
-      const passwordHashed = await this.passwordHasherService.hashPassword(data.password);
-      return this.userRepository.save({ ...data, password: passwordHashed });
+      return this.userRepository.findBy({ birthCity });
     } catch (error) {
       console.log(error);
       throw new Error('Error while creating article');

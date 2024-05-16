@@ -10,6 +10,7 @@ import {
 import { OrderCreateDto } from '../dto/order-create.dto';
 import { CreateOrderService } from '../use-case/createOrder';
 import { GetOrdersService } from '../use-case/getOrders';
+import { updateOrderPaidService } from '../use-case/updateOrderPaid';
 
 // @Controller('articles')
 // est un décorateur qui permet de déclarer un controller
@@ -22,6 +23,7 @@ export class OrderController {
   constructor(
     private readonly createorderService: CreateOrderService,
     private readonly getOrdersService: GetOrdersService,
+    private readonly updateOrderPaidService: updateOrderPaidService,
   ) { }
 
   // on utilise le décorateur @Body pour récupérer
@@ -36,5 +38,12 @@ export class OrderController {
   @Get()
   getOrders() {
     return this.getOrdersService.getOrders();
+  }
+
+  @Put('/payment/:id')
+  updateOrderPaid(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.updateOrderPaidService.updateOrderPaid(id);
   }
 }

@@ -9,6 +9,7 @@ export class Order {
       if (Object.keys(createOrderDto.items).length > 3) throw new Error("More than 3 items are not allowed");
       this.createdAt = new Date();
       this.updatedAt = new Date();
+      this.paidAt = new Date();
       this.status = "pending";
       this.total = 12;
       this.items = createOrderDto.items;
@@ -24,6 +25,9 @@ export class Order {
 
   @Column()
   updatedAt: Date;
+
+  @Column({ nullable: true })
+  paidAt: Date;
 
   @Column()
   customer: string;

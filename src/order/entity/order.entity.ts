@@ -41,13 +41,62 @@ export class Order {
   @Column()
   total: number;
 
+
+  @Column({ nullable: true })
+  invoiceAddress: string;
+
+  @Column({ nullable: true })
+  shippingAddress: string;
+
+  @Column({ nullable: true })
+  shippingMethod: string;
+
+  @Column({ nullable: true })
+  invoiceAddressSetAt: Date;
+
+  @Column({ nullable: true })
+  shippingMethodSetAt: Date;
+
   pay() {
     if (!this) {
       throw new Error('Order not found');
     }
+    if (this.status === 'paid') throw new Error('Order already paid');
+    if (this.status === 'shipping') throw new Error('Order already shipped');
     this.status = 'paid';
     this.paidAt = new Date();
     this.updatedAt = new Date();
+    return this;
+  }
+
+  updateShippingAddress(shippingAddress: string, shippingMethod: string, invoiceAddress?: string) {
+    if (!this) {
+      throw new Error('Order not found');
+    }
+    if (!shippingAddress || !shippingMethod) throw new Error('Shipping address and shipping method are required');
+    this.shippingMethod = shippingMethod;
+    this.shippingAddress = shippingAddress;
+    this.updatedAt = new Date();
+    this.shippingMethodSetAt = new Date();
+    this.invoiceAddressSetAt = new Date();
+    this.status = 'shipping';
+    if (!invoiceAddress) {
+      this.invoiceAddress = shippingAddress;
+    } else {
+      this.invoiceAddress = invoiceAddress;
+    }
+    return this;
+  }
+
+  updateInvoiceAddress(invoiceAddress: string) {
+    if (!this) {
+      throw new Error('Order not found');
+    }
+    if (!invoiceAddress) throw new Error('Invoice address is required');
+    if (this.status === 'shipping') throw new Error('Order already shipped');
+    this.invoiceAddress = invoiceAddress;
+    this.updatedAt = new Date();
+    this.invoiceAddressSetAt = new Date();
     return this;
   }
 }

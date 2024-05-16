@@ -41,4 +41,13 @@ export class Order {
   @Column()
   total: number;
 
+  pay() {
+    if (!this) {
+      throw new Error('Order not found');
+    }
+    this.status = 'paid';
+    this.paidAt = new Date();
+    this.updatedAt = new Date();
+    return this;
+  }
 }

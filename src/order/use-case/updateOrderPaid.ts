@@ -18,13 +18,8 @@ export class updateOrderPaidService {
   async updateOrderPaid(id: number) {
     try {
       const order = await this.orderRepository.findOneBy({ id });
-      if (!order) {
-        throw new Error('Order not found');
-      }
-      order.status = 'paid';
-      order.paidAt = new Date();
-      order.updatedAt = new Date();
-      return this.orderRepository.save(order);
+      const payedOrder = order.pay();
+      return this.orderRepository.save(payedOrder);
     } catch (error) {
       console.log(error);
       throw new Error('Error while creating article');

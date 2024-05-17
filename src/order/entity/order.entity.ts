@@ -1,18 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OrderCreateDto } from '../dto/order-create.dto';
+import { OrderItem } from './orderItem.entity';
+import { ItemOrderDto } from '../dto/item-order.dto';
 
 @Entity()
 export class Order {
 
   constructor(createOrderDto: OrderCreateDto) {
     if (createOrderDto) {
-      if (Object.keys(createOrderDto.items).length > 3) throw new Error("More than 3 items are not allowed");
+      if (createOrderDto.items.length > 3) throw new Error("More than 3 items are not allowed");
       this.createdAt = new Date();
       this.updatedAt = new Date();
       this.paidAt = new Date();
       this.status = "pending";
       this.total = 12;
-      this.items = createOrderDto.items;
+      this.items = [];
+      this.getItems(createOrderDto.items);
       this.customer = "test";
     }
   }
@@ -32,8 +35,8 @@ export class Order {
   @Column()
   customer: string;
 
-  @Column('json')
-  items: JSON;
+  @OneToMany(() => OrderItem, orderItem => orderItem.order, { cascade: true })
+  items: OrderItem[];
 
   @Column()
   status: string;
@@ -98,5 +101,20 @@ export class Order {
     this.updatedAt = new Date();
     this.invoiceAddressSetAt = new Date();
     return this;
+  }
+
+  private getItems(items: string[]) {
+    items.map((item) => {
+      const existingItem = this.items.find((i) => i.product === item);
+      if (existingItem) {
+        console.log('existingItem', existingItem);
+
+        existingItem.quantity += 1;
+      } else {
+        this.items.push(new OrderItem({ product: item }));
+      }
+    });
+    console.log('this.items', this.items);
+
   }
 }

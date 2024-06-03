@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UserCreateDto } from '../dto/user-create.dto';
 import { CreateUserService } from '../use-case/createUser';
@@ -14,6 +15,7 @@ import { GetUserByIdService } from '../use-case/getUserById';
 import { GetUsersByBirthCityService } from '../use-case/getUsersByBirthCity';
 import { UpdateUserService } from '../use-case/updateUser';
 import { UpdateUserPasswordService } from '../use-case/updateUserPassword';
+import { AuthGuard } from 'src/auth/use-case/auth.guard';
 
 // @Controller('articles')
 // est un décorateur qui permet de déclarer un controller
@@ -67,6 +69,7 @@ export class UserController {
     return this.updateUserService.updateUser(id, data);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id/password')
   updateUserPassword(
     @Param('id', ParseIntPipe) id: number,

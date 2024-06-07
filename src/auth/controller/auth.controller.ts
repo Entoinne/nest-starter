@@ -1,13 +1,9 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
 import { LoginService } from '../use-case/login';
-import { AuthGuard } from '../use-case/auth.guard';
 
 @Controller('auth')
 export class AuthController {

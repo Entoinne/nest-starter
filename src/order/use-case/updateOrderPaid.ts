@@ -21,7 +21,6 @@ export class updateOrderPaidService {
       const payedOrder = order.pay();
       return this.orderRepository.save(payedOrder);
     } catch (error) {
-      console.log(error);
       throw new Error('Error while creating article');
     }
   }

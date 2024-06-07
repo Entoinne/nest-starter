@@ -8,9 +8,10 @@ import { DeleteArticle } from './use-case/deleteArticle';
 import { GetOneArticleById } from './use-case/getOneArticleById';
 import { CreateArticle } from './use-case/createArticle';
 import { UpdateArticle } from './use-case/updateArticle';
+import { OrderItem } from 'src/order/entity/orderItem.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Article])],
+  imports: [TypeOrmModule.forFeature([Article, OrderItem])],
   controllers: [ArticleController],
   providers: [GetAllArticles, GetOneArticleById, DeleteArticle, GetArticlesByAuthor, CreateArticle, UpdateArticle],
 })

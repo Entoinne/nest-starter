@@ -13,4 +13,10 @@ export class Article {
 
   @Column({ type: 'varchar' })
   author: string;
+
+  @Column({ type: 'decimal', precision: 2, nullable: true })
+  price: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  imageUrl: string;
 }

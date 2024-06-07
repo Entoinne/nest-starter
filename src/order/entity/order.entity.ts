@@ -1,22 +1,19 @@
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OrderCreateDto } from '../dto/order-create.dto';
 import { OrderItem } from './orderItem.entity';
 import { ItemOrderDto } from '../dto/item-order.dto';
-
 @Entity()
 export class Order {
 
   constructor(createOrderDto: OrderCreateDto) {
     if (createOrderDto) {
-      if (createOrderDto.items.length > 3) throw new Error("More than 3 items are not allowed");
       this.createdAt = new Date();
       this.updatedAt = new Date();
-      this.paidAt = new Date();
-      this.status = "pending";
-      this.total = 12;
+      this.status = "in cart";
       this.items = [];
-      this.getItems(createOrderDto.items);
-      this.customer = "test";
+      this.addItems(createOrderDto.items.map((item) => item));
+      this.customer = createOrderDto.customer;
+      this.total = createOrderDto.items.reduce((acc, item) => acc + item.price, 0);
     }
   }
 
@@ -60,6 +57,17 @@ export class Order {
   @Column({ nullable: true })
   shippingMethodSetAt: Date;
 
+  updateOrder(data: OrderCreateDto) {
+    if (!this) {
+      throw new Error('Order not found');
+    }
+    this.updatedAt = new Date();
+    this.addItems(data.items.map((item) => item));
+
+    this.total = this.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0);
+    return this;
+  }
+
   pay() {
     if (!this) {
       throw new Error('Order not found');
@@ -82,7 +90,7 @@ export class Order {
     this.updatedAt = new Date();
     this.shippingMethodSetAt = new Date();
     this.invoiceAddressSetAt = new Date();
-    this.status = 'shipping';
+    this.status = 'ready to ship';
     if (!invoiceAddress) {
       this.invoiceAddress = shippingAddress;
     } else {
@@ -103,18 +111,19 @@ export class Order {
     return this;
   }
 
-  private getItems(items: string[]) {
-    items.map((item) => {
-      const existingItem = this.items.find((i) => i.product === item);
-      if (existingItem) {
-        console.log('existingItem', existingItem);
-
-        existingItem.quantity += 1;
-      } else {
-        this.items.push(new OrderItem({ product: item }));
-      }
-    });
+  private addItems(items: ItemOrderDto[]) {
+    console.log('items', items);
     console.log('this.items', this.items);
 
+
+    items.forEach((item) => {
+      const existingItem = this.items.find((i) => i.id === item.id);
+
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        this.items = [...this.items, new OrderItem({ id: item.id, product: item.product, quantity: item.quantity, price: item.price, productId: item.productId })];
+      }
+    });
   }
 }

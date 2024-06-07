@@ -21,7 +21,6 @@ export class updateOrderInvoiceAddressService {
       const updatedOrder = order.updateInvoiceAddress(invoiceAddress);
       return this.orderRepository.save(updatedOrder);
     } catch (error) {
-      console.log(error);
       throw new Error('Error while creating article');
     }
   }

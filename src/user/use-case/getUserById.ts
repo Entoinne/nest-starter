@@ -19,7 +19,6 @@ export class GetUserByIdService {
     try {
       return this.userRepository.findOneBy({ id });
     } catch (error) {
-      console.log(error);
       throw new Error('Error while creating article');
     }
   }

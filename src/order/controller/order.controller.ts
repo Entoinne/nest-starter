@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { OrderCreateDto } from '../dto/order-create.dto';
 import { CreateOrderService } from '../use-case/createOrder';
@@ -15,27 +16,24 @@ import { OrderUpdateShippingAddressDto } from '../dto/order-update-shipping-addr
 import { updateOrderShippingAddressService } from '../use-case/updateOrderShippingAddressService';
 import { OrderUpdateInvoiceAddressDto } from '../dto/order-update-invoice-address.dto';
 import { updateOrderInvoiceAddressService } from '../use-case/updateOrderInvoiceAddressService';
+import { AuthGuard } from 'src/auth/use-case/auth.guard';
+import { GetOrdersByCustomerService } from '../use-case/getOrdersByCustomer';
+import { GetCartByCustomerService } from '../use-case/getCartByCustomer';
 
-// @Controller('articles')
-// est un décorateur qui permet de déclarer un controller
-// donc une classe qui va contenir des routes (url accessible)
+@UseGuards(AuthGuard)
 @Controller('orders')
 export class OrderController {
-  // injection de dépendance
-  // permet d'instancier la classe ArticleService
-  // dans la propriété articleService
+
   constructor(
     private readonly createorderService: CreateOrderService,
     private readonly getOrdersService: GetOrdersService,
     private readonly updateOrderPaidService: updateOrderPaidService,
     private readonly updateOrderShippingAddressService: updateOrderShippingAddressService,
     private readonly updateOrderInvoiceAddressService: updateOrderInvoiceAddressService,
+    private readonly getOrdersByCustomerService: GetOrdersByCustomerService,
+    private readonly getCartByCustomerService: GetCartByCustomerService,
   ) { }
 
-  // on utilise le décorateur @Body pour récupérer
-  // les données du body de la requête
-  // on valide les données du body de la requête
-  // avec un DTO (Data Transfer Object)
   @Post()
   createOrder(@Body() data: OrderCreateDto) {
     return this.createorderService.createOrder(data);
@@ -44,6 +42,13 @@ export class OrderController {
   @Get()
   getOrders() {
     return this.getOrdersService.getOrders();
+  }
+
+  @Get(':customer')
+  getOrdersByCustomer(
+    @Param('customer') customer: string,
+  ) {
+    return this.getOrdersByCustomerService.getOrdersByCustomer(customer);
   }
 
   @Put('/payment/:id')
@@ -67,5 +72,12 @@ export class OrderController {
     @Body() data: OrderUpdateInvoiceAddressDto,
   ) {
     return this.updateOrderInvoiceAddressService.updateOrderInvoiceAddress(id, data.invoiceAddress);
+  }
+
+  @Get('/cart/:customer')
+  getCartByCustomer(
+    @Param('customer') customer: string,
+  ) {
+    return this.getCartByCustomerService.getCartByCustomer(customer);
   }
 }

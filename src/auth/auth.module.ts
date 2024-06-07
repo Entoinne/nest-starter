@@ -12,7 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       global: true,
       secret: 'slt-les-gens',
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '9999999999999999s' },
     }),
   ],
   controllers: [AuthController],
@@ -20,11 +20,3 @@ import { JwtModule } from '@nestjs/jwt';
 
 })
 export class AuthModule { }
-
-// {
-//   provide: CreateUserService,
-//   useFactory: (passwordHasherService: PasswordHasherServiceInterface) => {
-//     return new CreateUserService(passwordHasherService);
-//   },
-//   inject: [PasswordService],
-// }

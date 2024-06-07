@@ -9,12 +9,13 @@ import { GetUserByIdService } from './use-case/getUserById';
 import { GetUsersByBirthCityService } from './use-case/getUsersByBirthCity';
 import { UpdateUserService } from './use-case/updateUser';
 import { UpdateUserPasswordService } from './use-case/updateUserPassword';
+import { GetProfileService } from './use-case/getProfile';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [PasswordService, GetAllUsersService, CreateUserService, GetUserByIdService, GetUsersByBirthCityService,
-    UpdateUserService, UpdateUserPasswordService],
+    UpdateUserService, UpdateUserPasswordService, GetProfileService],
 
 })
 export class UserModule { }

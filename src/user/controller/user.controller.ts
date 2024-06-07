@@ -16,37 +16,32 @@ import { GetUsersByBirthCityService } from '../use-case/getUsersByBirthCity';
 import { UpdateUserService } from '../use-case/updateUser';
 import { UpdateUserPasswordService } from '../use-case/updateUserPassword';
 import { AuthGuard } from 'src/auth/use-case/auth.guard';
+import { GetProfileService } from '../use-case/getProfile';
 
-// @Controller('articles')
-// est un décorateur qui permet de déclarer un controller
-// donc une classe qui va contenir des routes (url accessible)
 @Controller('users')
 export class UserController {
-  // injection de dépendance
-  // permet d'instancier la classe ArticleService
-  // dans la propriété articleService
+
   constructor(private readonly createUserService: CreateUserService,
     private readonly getAllUsersService: GetAllUsersService,
     private readonly getUserByIdService: GetUserByIdService,
     private readonly getUsersByBirthCityService: GetUsersByBirthCityService,
     private readonly updateUserService: UpdateUserService,
     private readonly updateUserPasswordService: UpdateUserPasswordService,
+    private readonly getProfileService: GetProfileService,
   ) { }
 
-  // on utilise le décorateur @Body pour récupérer
-  // les données du body de la requête
-  // on valide les données du body de la requête
-  // avec un DTO (Data Transfer Object)
   @Post()
   createUser(@Body() data: UserCreateDto) {
     return this.createUserService.createUser(data);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   getAllUsers() {
     return this.getAllUsersService.getAllUsers();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   getUserById(
     @Param('id', ParseIntPipe) id: number,
@@ -54,6 +49,7 @@ export class UserController {
     return this.getUserByIdService.getUserById(id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('ville/:birthCity')
   getUsersByBirthCity(
     @Param('birthCity') birthCity: string,
@@ -61,6 +57,7 @@ export class UserController {
     return this.getUsersByBirthCityService.getUsersByBirthCity(birthCity);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -76,5 +73,12 @@ export class UserController {
     @Body() password: string,
   ) {
     return this.updateUserPasswordService.updateUserPassword(id, password);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('profile')
+  @UseGuards(AuthGuard)
+  getProfile(@Body() username: string) {
+    return this.getProfileService.getProfileByUsername(username);
   }
 }

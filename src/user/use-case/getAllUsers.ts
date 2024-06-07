@@ -19,7 +19,6 @@ export class GetAllUsersService {
     try {
       return this.userRepository.find();
     } catch (error) {
-      console.log(error);
       throw new Error('Error while creating article');
     }
   }

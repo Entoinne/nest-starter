@@ -1,29 +1,30 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Order } from "./order.entity";
 import { ItemOrderDto } from "../dto/item-order.dto";
+import { Article } from "src/article/entity/article.entity";
 
 @Entity()
 export class OrderItem {
 
     constructor(orderItem: ItemOrderDto) {
         if (orderItem) {
-            this.product = orderItem.product;
-            this.quantity = 1;
-            this.price = 10;
+            this.quantity = orderItem.quantity;
+            this.price = orderItem.price;
+            this.id = orderItem.id;
         }
     }
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    product: string;
+    @ManyToOne(() => Article, article => article.id)
+    productId: Article;
 
     @Column()
     quantity: number;
 
-    @Column('decimal', { precision: 6, scale: 2, nullable: false })
+    @Column('numeric', { precision: 10, scale: 2 })
     price: number;
 
-    @ManyToOne(() => Order, order => order.items)
+    @ManyToOne(() => Order, order => order.id)
     order: Order;
 }

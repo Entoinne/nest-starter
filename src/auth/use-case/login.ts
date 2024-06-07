@@ -8,10 +8,7 @@ import { Repository } from 'typeorm';
 Injectable();
 export class LoginService {
   constructor(
-    // on "injecte" le repository de l'entité Article
-    // dans la propriété articleRepository de la classe ArticleService
-    // pour pouvoir ensuite utiliser les méthodes du repository
-    // dans les méthodes de notre service
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly passwordHasherService: PasswordService,
@@ -31,11 +28,10 @@ export class LoginService {
         throw new Error('Password is not valid');
       } else {
         return {
-          access_token: await this.jwsService.signAsync({ data }),
+          access_token: await this.jwsService.signAsync({ id: user.id, username: user.username }),
         };
       }
     } catch (error) {
-      console.log(error);
       throw new Error('User not found in db');
     }
   }

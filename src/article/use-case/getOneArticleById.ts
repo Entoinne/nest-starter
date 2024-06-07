@@ -6,14 +6,20 @@ import { Article } from '../entity/article.entity';
 Injectable();
 export class GetOneArticleById {
   constructor(
-    // on "injecte" le repository de l'entité Article
-    // dans la propriété articleRepository de la classe ArticleService
-    // pour pouvoir ensuite utiliser les méthodes du repository
-    // dans les méthodes de notre service
+
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
   ) { }
   async getOneArticleById(id: number) {
-    return await this.articleRepository.findOneBy({ id });
+    try {
+      const article = await this.articleRepository.findOneBy({ id });
+      if (!article) {
+        throw new Error('Article not found');
+      } else {
+        return article;
+      }
+    } catch {
+      throw new Error('Article not found');
+    }
   }
 }

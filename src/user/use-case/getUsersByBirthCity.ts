@@ -19,7 +19,6 @@ export class GetUsersByBirthCityService {
     try {
       return this.userRepository.findBy({ birthCity });
     } catch (error) {
-      console.log(error);
       throw new Error('Error while creating article');
     }
   }

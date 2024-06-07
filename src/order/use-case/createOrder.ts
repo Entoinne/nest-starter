@@ -18,10 +18,16 @@ export class CreateOrderService {
 
   async createOrder(data: OrderCreateDto) {
     try {
-      const order = new Order(data);
-      return this.orderRepository.save(order);
+      let existingOrder = await this.orderRepository.findOne({ where: { customer: data.customer, status: 'in cart' }, relations: ['items'] });
+      if (existingOrder) {
+
+        existingOrder = existingOrder.updateOrder(data);
+
+        return this.orderRepository.save(existingOrder);
+      } else {
+        return this.orderRepository.save(new Order(data));
+      }
     } catch (error) {
-      console.log(error);
       throw new Error('Error while creating article');
     }
   }

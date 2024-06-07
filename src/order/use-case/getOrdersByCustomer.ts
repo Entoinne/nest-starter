@@ -4,20 +4,17 @@ import { Repository } from 'typeorm';
 import { Order } from '../entity/order.entity';
 
 Injectable();
-export class GetOrdersService {
+export class GetOrdersByCustomerService {
     constructor(
-        // on "injecte" le repository de l'entité Article
-        // dans la propriété articleRepository de la classe ArticleService
-        // pour pouvoir ensuite utiliser les méthodes du repository
-        // dans les méthodes de notre service
+
         @InjectRepository(Order)
         private readonly orderRepository: Repository<Order>,
     ) { }
 
 
-    async getOrders() {
+    async getOrdersByCustomer(customer: string) {
         try {
-            return this.orderRepository.find();
+            return await this.orderRepository.findBy({ customer: customer });
         } catch (error) {
             throw new Error('Error while creating article');
         }
